@@ -970,6 +970,9 @@
       <p>Fill out the form below and we'll be in touch within 24 hours to lock in your date.</p>
 
       <form class="booking-form" id="booking-form">
+        <input type="hidden" name="access_key" value="f0340452-a105-4662-986c-2df00cafff84" />
+        <input type="hidden" name="subject" value="New Booking Request — Beats By Dev" />
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
         <div class="form-row">
           <label for="bf-name">Name</label>
           <input type="text" id="bf-name" name="name" placeholder="Priya Patel" required />
@@ -1281,30 +1284,44 @@
       ).forEach(function (el) { observer.observe(el); });
     })();
 
-    /* ── Booking form: submit inline, no page redirect ── */
+    /* ── Booking form: submit via Web3Forms, no page redirect ──────────────────
+     * Posts directly to Web3Forms' API so the request is emailed server-side
+     * (works regardless of what mail app, if any, the visitor has set up).
+     * ─────────────────────────────────────────────────────────────────────── */
     (function () {
       var form = document.getElementById('booking-form');
       var success = document.getElementById('booking-success');
+      var submitBtn = form ? form.querySelector('button[type="submit"]') : null;
       if (!form) return;
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         var data = new FormData(form);
-        var subject = encodeURIComponent('Booking Request — ' + data.get('event'));
-        var body = encodeURIComponent(
-          'Name: ' + data.get('name') + '\n' +
-          'Phone: ' + data.get('phone') + '\n' +
-          'Email: ' + data.get('email') + '\n' +
-          'Event: ' + data.get('event') + '\n' +
-          'Guest Count: ' + (data.get('guests') || '—') + '\n' +
-          'Event Date: ' + (data.get('date') || '—')
-        );
-        var mailtoLink = document.createElement('a');
-        mailtoLink.href = 'mailto:beatzzbydev@gmail.com?subject=' + subject + '&body=' + body;
-        mailtoLink.click();
+        var originalLabel = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
 
-        success.style.display = 'block';
-        form.reset();
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: data
+        })
+          .then(function (res) { return res.json(); })
+          .then(function (result) {
+            if (result.success) {
+              success.style.display = 'block';
+              form.reset();
+            } else {
+              alert('Something went wrong sending your request. Please call (847) 571-3542 or email beatzzbydev@gmail.com directly.');
+            }
+          })
+          .catch(function () {
+            alert('Something went wrong sending your request. Please call (847) 571-3542 or email beatzzbydev@gmail.com directly.');
+          })
+          .finally(function () {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalLabel;
+          });
       });
     })();
   </script>
