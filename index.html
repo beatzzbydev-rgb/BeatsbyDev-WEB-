@@ -800,8 +800,8 @@
 
   <!-- HERO -->
   <section class="hero">
-    <video class="hero-video hero-video-bg" src="assets/hero-video.mp4" autoplay muted playsinline aria-hidden="true"></video>
-    <video class="hero-video hero-video-fg" src="assets/hero-video.mp4" autoplay muted playsinline></video>
+    <video class="hero-video hero-video-bg" src="assets/hero-video.mp4" poster="assets/hero-photo.jpg" autoplay muted playsinline webkit-playsinline preload="auto" aria-hidden="true"></video>
+    <video class="hero-video hero-video-fg" src="assets/hero-video.mp4" poster="assets/hero-photo.jpg" autoplay muted playsinline webkit-playsinline preload="auto"></video>
     <div class="hero-overlay"></div>
 
     <div class="container">
@@ -1154,6 +1154,28 @@
         if (!isDown) return;
         e.preventDefault();
         marquee.scrollLeft = startScroll - (e.pageX - startX);
+      });
+    })();
+
+    /* ── Hero video: force-start playback ─────────────────────────────────────
+     * Some mobile browsers (notably iOS Safari in Low Power Mode) silently
+     * ignore the `autoplay` attribute even when muted+playsinline are set.
+     * Explicitly call .play() once the DOM is ready, and again on the first
+     * touch/click anywhere on the page as a fallback in case the initial
+     * call was blocked.
+     * ─────────────────────────────────────────────────────────────────────── */
+    (function () {
+      var videos = document.querySelectorAll('.hero-video');
+
+      function tryPlay() {
+        videos.forEach(function (video) {
+          if (video.paused) video.play().catch(function () {});
+        });
+      }
+
+      tryPlay();
+      ['touchstart', 'click'].forEach(function (evt) {
+        document.addEventListener(evt, tryPlay, { once: true, passive: true });
       });
     })();
 
