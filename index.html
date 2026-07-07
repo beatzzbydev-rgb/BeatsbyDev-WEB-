@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beats By Dev — Entertainment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black:    #0f0f0f;
+      --gray-900: #262626;
+      --gray-800: #404040;
+      --gray-700: #666666;
+      --gray-600: #8c8c8c;
+      --gray-500: #a5a5a5;
+      --gray-400: #bfbfbf;
+      --gray-300: #cccccc;
+      --gray-200: #e6e6e6;
+      --gray-100: #f2f2f2;
+      --white:    #ffffff;
+      --accent:   #C9A84C;
+      --accent-dk:#a8893a;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--white);
+      color: var(--black);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── UTILS ── */
+    .container {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .accent { color: var(--accent); }
+
+    .tag {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 2px;
+      padding: 6px 14px;
+      margin-bottom: 20px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-200);
+    }
+    .divider-diamond {
+      color: var(--accent);
+      font-size: 12px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      border-radius: 3px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    .btn-accent {
+      background: var(--accent);
+      color: var(--white);
+      border-color: var(--accent);
+    }
+    /* Hover-trail button: glassy black pill with an inset glow border;
+       moving the pointer across it drops small blurred gold circles that
+       fade in, then out, at the cursor's position — vanilla-CSS/JS
+       recreation of a React "HoverButton" component (no framer-motion). */
+    .btn-hover-trail {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border-radius: 999px;
+      color: var(--white);
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-color: transparent;
+      box-shadow:
+        inset 0 0 0 1px rgba(201, 168, 76, 0.28),
+        inset 0 0 16px 0 rgba(201, 168, 76, 0.14),
+        inset 0 -3px 12px 0 rgba(201, 168, 76, 0.16),
+        0 1px 3px rgba(0, 0, 0, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.45);
+      transition: transform 0.3s;
+    }
+    .btn-hover-trail:hover { background: rgba(20, 20, 20, 0.6); }
+    .btn-hover-trail:active { transform: scale(0.975); }
+    .hover-trail-circle {
+      position: absolute;
+      z-index: -1;
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      filter: blur(8px);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .hover-trail-circle.is-in { opacity: 0.75; }
+    .hover-trail-circle.is-out { opacity: 0; transition-duration: 1.2s; }
+    /* Particle button: a quick press-scale plus a burst of small dots on
+       click — vanilla-CSS/JS recreation of a React "ParticleButton"
+       (framer-motion) component; see the click-particles script. */
+    .btn-particle { transition: transform 0.1s ease, background 0.2s, border-color 0.2s, opacity 0.4s ease; }
+    .btn-particle.is-pressed { transform: scale(0.95); }
+    .btn-particle-icon { flex-shrink: 0; }
+    .click-particle {
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--white);
+      opacity: 0;
+      pointer-events: none;
+      animation: click-particle-burst 0.6s ease-out forwards;
+    }
+    @keyframes click-particle-burst {
+      0%   { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+      30%  { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--px)), calc(-50% + var(--py))) scale(0); opacity: 0; }
+    }
+    .btn-accent:hover { background: var(--accent-dk); border-color: var(--accent-dk); }
+    .btn-dark {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+    .btn-dark:hover { background: var(--gray-900); }
+    .btn-outline {
+      background: transparent;
+      color: var(--black);
+      border-color: var(--black);
+    }
+    .btn-outline:hover { background: var(--black); color: var(--white); }
+    .btn-outline-light {
+      background: transparent;
+      color: var(--white);
+      border-color: var(--gray-700);
+    }
+    .btn-outline-light:hover { border-color: var(--white); }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--black);
+      border-bottom: 1px solid var(--gray-900);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 84px;
+    }
+    .logo img {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+    }
+    /* Pill nav with a sliding highlight that follows the hovered tab —
+       recreated in vanilla CSS/JS (see the nav-pill script) rather than
+       React + framer-motion, to match how the rest of this static site
+       is built. */
+    .nav-links {
+      position: relative;
+      display: flex;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--gray-800);
+      border-radius: 999px;
+      padding: 4px;
+    }
+    .nav-links li { list-style: none; }
+    .nav-links a {
+      position: relative;
+      z-index: 2;
+      display: block;
+      padding: 10px 20px;
+      border-radius: 999px;
+      color: var(--gray-400);
+      transition: color 0.25s ease;
+    }
+    .nav-links li.nav-pill-active a { color: var(--black); }
+    .nav-pill-cursor {
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: var(--accent);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                  width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .nav-cta { display: flex; align-items: center; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 160px 0 80px;
+      text-align: center;
+      color: var(--white);
+      background: var(--black);
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+      z-index: 0;
+    }
+    /* The clip is portrait (720x1280). On narrow/portrait screens, cover fills
+       nicely. On wide desktop screens, cover would zoom in and chop the
+       subject off — so above 900px we blur-fill the backdrop instead and show
+       the real clip uncropped (contain) on top of it. */
+    .hero-video-bg {
+      display: none;
+      filter: blur(30px) brightness(0.55);
+      transform: scale(1.15);
+    }
+    @media (min-width: 900px) {
+      .hero-video-bg { display: block; }
+      .hero-video-fg {
+        object-fit: contain;
+        object-position: center center;
+      }
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,15,15,0.55) 0%, rgba(15,15,15,0.82) 100%);
+      z-index: 1;
+    }
+
+    /* ── HERO LOGO + PILL CTA (minimal photo-hero style) ── */
+    .hero-logo {
+      max-width: 380px;
+      width: 70%;
+      margin: 0 auto 36px;
+      filter: drop-shadow(0 8px 40px rgba(0,0,0,0.6));
+      opacity: 0;
+      animation: hero-logo-fade 0.8s ease 0.2s forwards;
+    }
+    @keyframes hero-logo-fade {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .btn-pill {
+      position: relative;
+      z-index: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px);
+      transition: all 0.2s;
+      overflow: hidden;
+    }
+    .btn-pill:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    /* Shimmer sweep: a soft diagonal highlight passes over the button every
+       few seconds, then rests — a calmer, vanilla-CSS take on the classic
+       "shimmer button" effect (no JS/build tooling needed for one CTA). */
+    .btn-pill::before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      top: -60%;
+      left: 0;
+      width: 35%;
+      height: 220%;
+      background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+      transform: translateX(-160%) rotate(8deg);
+      animation: btn-shimmer-sweep 3.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes btn-shimmer-sweep {
+      0%, 20%   { transform: translateX(-160%) rotate(8deg); }
+      55%, 100% { transform: translateX(260%) rotate(8deg); }
+    }
+
+    .hero > .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* ── SHARED SECTION ── */
+    section { padding: 100px 0; }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-header h2 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(30px, 4.5vw, 58px);
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+    }
+    .section-header p {
+      max-width: 540px;
+      margin: 18px auto 0;
+      color: var(--gray-700);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── SERVICES ── */
+    .services { background: var(--white); }
+    .services .section-header p {
+      font-family: 'Lora', serif;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--gray-200);
+      border: 1px solid var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .service-card {
+      background: var(--white);
+      padding: 38px 32px;
+      transition: background 0.2s;
+    }
+    .service-card:hover { background: var(--gray-100); }
+    .service-icon {
+      font-size: 26px;
+      margin-bottom: 18px;
+    }
+    .service-card h3 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+      margin-bottom: 12px;
+      color: var(--black);
+    }
+    .service-card p {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      color: var(--gray-700);
+      line-height: 1.7;
+    }
+    .service-card .service-tag {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    /* ── STATS ── */
+    .stats { background: var(--black); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--gray-900);
+      border: 1px solid var(--gray-900);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .stat-item {
+      background: var(--black);
+      padding: 48px 28px;
+      text-align: center;
+      position: relative;
+    }
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 1px;
+    }
+    .stat-number {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(38px, 5vw, 60px);
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--gray-500);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── ABOUT ── */
+    .about { background: var(--black); color: var(--white); }
+    .about .section-header h2 { color: var(--white); }
+    .about .section-header p { color: var(--gray-400); }
+    .about-centered {
+      max-width: 680px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .about-centered p {
+      font-family: 'Lora', serif;
+      font-size: clamp(18px, 2vw, 21px);
+      font-weight: 400;
+      color: var(--gray-200);
+      line-height: 1.95;
+      letter-spacing: 0.005em;
+      margin-bottom: 22px;
+    }
+    .about-centered p em {
+      color: var(--accent);
+      font-style: italic;
+    }
+    .about .divider::before,
+    .about .divider::after {
+      background: var(--gray-800);
+    }
+    .about-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 24px 0 36px;
+    }
+    .about-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-200);
+    }
+    .about-list li::before {
+      content: '◆';
+      color: var(--accent);
+      font-size: 8px;
+      flex-shrink: 0;
+    }
+    .about-list-centered {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      margin: 0 auto;
+    }
+    .contact-line {
+      font-size: 13px;
+      color: var(--gray-400);
+      margin-top: 6px;
+    }
+    .contact-line a { color: var(--accent); font-weight: 700; }
+    .contact-line a:hover { color: var(--accent-dk); }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials { background: var(--gray-100); overflow: hidden; }
+    /* User-driven horizontal scroller (replaces the old auto-playing
+       marquee): drag with a mouse, or swipe/trackpad-scroll natively. */
+    .marquee {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      cursor: grab;
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+      mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+      scrollbar-width: none;
+    }
+    .marquee::-webkit-scrollbar { display: none; }
+    .marquee.is-dragging { cursor: grabbing; scroll-behavior: auto; }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      gap: 20px;
+      padding: 0 4px;
+    }
+    .marquee-unit {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 20px;
+    }
+    .testimonial-card {
+      flex: 0 0 360px;
+      background: linear-gradient(180deg, var(--gray-200) 0%, var(--white) 65%);
+      border: 1px solid var(--gray-200);
+      border-top: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 32px 28px;
+      position: relative;
+      transition: background 0.3s ease;
+    }
+    .testimonial-card:hover {
+      background: linear-gradient(180deg, var(--gray-300) 0%, var(--white) 65%);
+    }
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: 8px;
+      right: 22px;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 72px;
+      color: var(--gray-200);
+      line-height: 1;
+    }
+    .stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 18px;
+    }
+    .star { color: var(--accent); font-size: 14px; }
+    .testimonial-card blockquote {
+      font-size: 14px;
+      color: var(--gray-800);
+      line-height: 1.75;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background: var(--black);
+      padding: 100px 0 96px;
+      text-align: center;
+    }
+    .cta-band h2 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: clamp(32px, 5.5vw, 64px);
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+    .cta-band p {
+      font-size: 16px;
+      color: var(--gray-500);
+      max-width: 460px;
+      margin: 0 auto 56px;
+    }
+    .cta-actions {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    /* ── BOOKING FORM ── */
+    .booking-form {
+      max-width: 500px;
+      margin: 0 auto;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .form-row-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 560px) {
+      .form-row-pair { grid-template-columns: 1fr; }
+    }
+    .form-row label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+    }
+    .form-row input {
+      width: 100%;
+      padding: 16px 18px;
+      border-radius: 3px;
+      border: 1px solid var(--gray-800);
+      background: var(--gray-900);
+      color: var(--white);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    .form-row input::placeholder { color: var(--gray-600); }
+    .form-row input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .booking-form button {
+      width: 100%;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    .booking-success {
+      display: none;
+      margin-top: 28px;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .booking-alt {
+      margin-top: 40px;
+      font-size: 13px;
+      color: var(--gray-600);
+    }
+    .booking-alt a { color: var(--gray-400); font-weight: 700; }
+    .booking-alt a:hover { color: var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--black);
+      padding: 64px 0 32px;
+    }
+    .footer-grid {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      margin-bottom: 52px;
+    }
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .footer-brand p {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-top: 20px;
+      line-height: 1.75;
+      max-width: 260px;
+    }
+    .footer-brand .footer-logo img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+    }
+    .footer-col h4 {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 20px;
+    }
+    .footer-col ul {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .footer-col ul li a {
+      font-size: 14px;
+      color: var(--gray-400);
+      transition: color 0.2s;
+    }
+    .footer-col ul li a:hover { color: var(--accent); }
+    .footer-bottom {
+      border-top: 1px solid var(--gray-900);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--gray-700);
+      flex-wrap: wrap;
+      gap: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* ── WORD REVEAL ── */
+    .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .word.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero-visual { aspect-ratio: 4 / 5; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        <img src="assets/logo-white.png" alt="Beats By Dev Entertainment" />
+      </a>
+      <ul class="nav-links" id="navPill">
+        <li class="nav-pill-cursor" id="navCursor" aria-hidden="true"></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="#contact" class="btn btn-hover-trail btn-particle">Book Your Date →<svg class="btn-particle-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></svg></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <video class="hero-video hero-video-bg" src="assets/hero-video.mp4" autoplay muted playsinline aria-hidden="true"></video>
+    <video class="hero-video hero-video-fg" src="assets/hero-video.mp4" autoplay muted playsinline></video>
+    <div class="hero-overlay"></div>
+
+    <div class="container">
+      <img class="hero-logo" src="assets/logo-white.png" alt="Beats By Dev Entertainment" />
+      <div class="hero-actions">
+        <a href="#contact" class="btn-pill">Contact Beats By Dev →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag">What We Do</span>
+        <h2>Premier <span class="accent">Entertainment Services</span></h2>
+      </div>
+      <div class="about-centered">
+        <p>
+          Beats By Dev Entertainment was built on one belief — <em>your music should
+          feel as personal as the night itself</em>. We've spent countless hours
+          perfecting the art of reading a crowd, blending cultures, and creating moments
+          that last a lifetime.
+        </p>
+        <p>
+          We specialize in weddings and cultural events,
+          seamlessly weaving together Bollywood, Bhangra, and English sets so that
+          every guest — from grandparents to groomsmen — stays on the floor all night.
+        </p>
+
+        <div class="divider"><span class="divider-diamond">◆</span></div>
+
+        <ul class="about-list about-list-centered">
+          <li>Professional sound system for any venue size</li>
+          <li>Professional lighting setup included</li>
+          <li>Bollywood · Bhangra · English — we play it all</li>
+          <li>Wedding Specialist</li>
+          <li>Extremely detailed event management — no surprises</li>
+        </ul>
+
+        <div style="margin-top:36px; display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+          <a href="#contact" class="btn btn-hover-trail btn-particle">Inquire Now →<svg class="btn-particle-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/></svg></a>
+        </div>
+        <p class="contact-line" style="text-align:center; margin-top:18px;">
+          <a href="mailto:beatzzbydev@gmail.com">beatzzbydev@gmail.com</a>
+          &nbsp;·&nbsp;
+          <a href="tel:8475713542">(847) 571-3542</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag">By The Numbers</span>
+        <h2 style="color: var(--white);">Proven on Every <span class="accent">Dancefloor</span></h2>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">100+</div>
+          <div class="stat-label">Events &amp; Counting</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">5★</div>
+          <div class="stat-label">Star Rating</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Client Satisfaction</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag">Reviews</span>
+        <h2>What Our <span class="accent">Clients</span> Say</h2>
+        <p>Real reviews from real weddings and events.</p>
+      </div>
+    </div>
+    <div class="marquee">
+      <div class="marquee-track" id="testimonial-track">
+        <div class="marquee-unit">
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>"Dev absolutely killed it at our wedding. He read the crowd perfectly — Bhangra into English and back seamlessly. Our guests are still talking about it."</blockquote>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>"Extremely professional, detailed, and energetic. The lighting setup was stunning and the sound was crystal clear throughout the entire ballroom."</blockquote>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>"Dev coordinated our entire night — not just the music. The timeline, the announcements, the transitions. Everything was flawless. 10/10 would rebook."</blockquote>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>"Our Garba night would not have been the same without him. The energy never dropped once — he had three generations on the floor at the same time."</blockquote>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>"Booked him for our corporate holiday party and he completely changed the room. Professional setup, great music mix, and he kept the whole night on schedule."</blockquote>
+          </div>
+          <div class="testimonial-card">
+            <div class="stars">★★★★★</div>
+            <blockquote>"From the first phone call to the last song, Dev made the whole process so easy. He genuinely listened to what we wanted and delivered above expectations."</blockquote>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag">What We Offer</span>
+        <h2>Full-Service <span class="accent">Production</span></h2>
+        <p>Full-service entertainment packages built for your most important night.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">🎧</div>
+          <h3>Professional DJ</h3>
+          <p>Seamless mixing, real-time crowd reading, and flawless transitions tailored to your energy all night long.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🔊</div>
+          <h3>Sound System</h3>
+          <p>Professional-grade audio equipment for venues of any size — crystal clear, concert-level sound guaranteed.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">💡</div>
+          <h3>Lighting Setup</h3>
+          <p>Dynamic lighting rigs that set the perfect mood — from ceremony softness to dancefloor energy.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">✨</div>
+          <h3>Special Effects</h3>
+          <p>Cold sparks, LED screens, and CO2 blasters that turn your dancefloor into a full production experience.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🥁</div>
+          <h3>Live Dhol</h3>
+          <p>High-energy dhol performance for baraat arrivals and first dances — the moment no one forgets.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📋</div>
+          <h3>Event Coordination</h3>
+          <p>Detailed run-of-show planning, venue walkthroughs, and timeline management so nothing is left to chance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND / BOOKING -->
+  <section class="cta-band" id="contact">
+    <div class="container">
+      <span class="tag">Limited Dates Available</span>
+      <h2>All It Takes Is 5 Minutes <span class="accent">To Inquire</span></h2>
+      <p>Fill out the form below and we'll be in touch within 24 hours to lock in your date.</p>
+
+      <form class="booking-form" id="booking-form">
+        <div class="form-row">
+          <label for="bf-name">Name</label>
+          <input type="text" id="bf-name" name="name" placeholder="Priya Patel" required />
+        </div>
+        <div class="form-row-pair">
+          <div class="form-row">
+            <label for="bf-phone">Phone Number</label>
+            <input type="tel" id="bf-phone" name="phone" placeholder="(000) 000-0000" required />
+          </div>
+          <div class="form-row">
+            <label for="bf-email">Email</label>
+            <input type="email" id="bf-email" name="email" placeholder="priya.patel@gmail.com" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="bf-event">Event Name</label>
+          <input type="text" id="bf-event" name="event" placeholder="e.g. Garba Night, Reception, Sweet 16" required />
+        </div>
+        <div class="form-row-pair">
+          <div class="form-row">
+            <label for="bf-guests">Guest Count</label>
+            <input type="text" id="bf-guests" name="guests" placeholder="100-800+ etc." />
+          </div>
+          <div class="form-row">
+            <label for="bf-date">Event Date</label>
+            <input type="date" id="bf-date" name="date" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-accent">Submit Booking Request →</button>
+      </form>
+
+      <p class="booking-success" id="booking-success">Thanks! Your request is on its way — we'll be in touch within 24 hours.</p>
+
+      <p class="booking-alt">Prefer to talk now? Call <a href="tel:8475713542">(847) 571-3542</a></p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="assets/logo-white.png" alt="Beats By Dev Entertainment" />
+          </div>
+          <p>Premier entertainment services. Professional sound, lighting, and seamless event management.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Beats By Dev Entertainment. All rights reserved.</span>
+        <span>Premier Entertainment Services</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Hover-trail buttons: cursor-following glow circles ───────────────────
+     * Vanilla recreation of a React "HoverButton": while the pointer moves
+     * over the button, drop a small blurred circle at its position (throttled
+     * to one every 100ms), fade it in, then out, then remove it — colored by
+     * a two-tone gradient split at the pointer's relative x position.
+     * ─────────────────────────────────────────────────────────────────────── */
+    (function () {
+      document.querySelectorAll('.btn-hover-trail').forEach(function (btn) {
+        var lastAdded = 0;
+
+        btn.addEventListener('pointermove', function (e) {
+          var now = Date.now();
+          if (now - lastAdded < 100) return;
+          lastAdded = now;
+
+          var rect = btn.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          var xPos = (x / rect.width) * 100;
+
+          var circle = document.createElement('div');
+          circle.className = 'hover-trail-circle';
+          circle.style.left = x + 'px';
+          circle.style.top = y + 'px';
+          circle.style.background =
+            'linear-gradient(to right, var(--accent) ' + xPos + '%, var(--accent-dk) ' + xPos + '%)';
+          btn.appendChild(circle);
+
+          setTimeout(function () { circle.classList.add('is-in'); }, 0);
+          setTimeout(function () { circle.classList.remove('is-in'); circle.classList.add('is-out'); }, 1000);
+          setTimeout(function () { circle.remove(); }, 2200);
+        });
+      });
+    })();
+
+    /* ── Particle buttons: click burst ─────────────────────────────────────────
+     * Vanilla recreation of a React+framer-motion "ParticleButton": a quick
+     * press-scale plus 6 small dots that burst outward from the button's
+     * center and fade, then get removed from the DOM. The link's default
+     * navigation (to #contact) still happens as normal alongside this.
+     * ─────────────────────────────────────────────────────────────────────── */
+    (function () {
+      document.querySelectorAll('.btn-particle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          btn.classList.add('is-pressed');
+          setTimeout(function () { btn.classList.remove('is-pressed'); }, 120);
+
+          var rect = btn.getBoundingClientRect();
+          var cx = rect.left + rect.width / 2;
+          var cy = rect.top + rect.height / 2;
+
+          for (var i = 0; i < 6; i++) {
+            var particle = document.createElement('div');
+            particle.className = 'click-particle';
+            particle.style.left = cx + 'px';
+            particle.style.top = cy + 'px';
+            var px = (i % 2 ? 1 : -1) * (Math.random() * 50 + 20);
+            var py = -(Math.random() * 50 + 20);
+            particle.style.setProperty('--px', px + 'px');
+            particle.style.setProperty('--py', py + 'px');
+            particle.style.animationDelay = (i * 0.1) + 's';
+            document.body.appendChild(particle);
+            (function (el) {
+              setTimeout(function () { el.remove(); }, 800);
+            })(particle);
+          }
+        });
+      });
+    })();
+
+    /* ── Nav pill: sliding hover highlight ─────────────────────────────────────
+     * Vanilla-JS/CSS recreation of a React+framer-motion nav component: a
+     * pill slides beneath whichever tab is hovered, and that tab's text
+     * switches to a dark color for contrast against the gold pill.
+     * ─────────────────────────────────────────────────────────────────────── */
+    (function () {
+      var nav = document.getElementById('navPill');
+      var cursor = document.getElementById('navCursor');
+      if (!nav || !cursor) return;
+      var tabs = Array.prototype.filter.call(nav.children, function (el) {
+        return el !== cursor;
+      });
+
+      tabs.forEach(function (tab) {
+        tab.addEventListener('mouseenter', function () {
+          cursor.style.width = tab.offsetWidth + 'px';
+          cursor.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
+          cursor.style.opacity = '1';
+          tab.classList.add('nav-pill-active');
+        });
+        tab.addEventListener('mouseleave', function () {
+          tab.classList.remove('nav-pill-active');
+        });
+      });
+
+      nav.addEventListener('mouseleave', function () {
+        cursor.style.opacity = '0';
+      });
+    })();
+
+    /* ── Testimonials: manual drag-to-scroll ──────────────────────────────────
+     * No auto-play — visitors scroll the reviews themselves (trackpad swipe,
+     * touch, or click-and-drag with a mouse) in either direction.
+     * ─────────────────────────────────────────────────────────────────────── */
+    (function () {
+      var marquee = document.querySelector('.testimonials .marquee');
+      if (!marquee) return;
+
+      var isDown = false;
+      var startX = 0;
+      var startScroll = 0;
+
+      marquee.addEventListener('mousedown', function (e) {
+        isDown = true;
+        marquee.classList.add('is-dragging');
+        startX = e.pageX;
+        startScroll = marquee.scrollLeft;
+      });
+
+      window.addEventListener('mouseup', function () {
+        isDown = false;
+        marquee.classList.remove('is-dragging');
+      });
+
+      window.addEventListener('mousemove', function (e) {
+        if (!isDown) return;
+        e.preventDefault();
+        marquee.scrollLeft = startScroll - (e.pageX - startX);
+      });
+    })();
+
+    /* ── Hero boomerang playback ──────────────────────────────────────────────
+     * Video elements can't play backward natively (negative playbackRate isn't
+     * supported), so on "ended" we manually scrub currentTime back to 0 via
+     * requestAnimationFrame, then resume normal forward playback — forward,
+     * reverse, forward, repeat.
+     * ─────────────────────────────────────────────────────────────────────── */
+    document.querySelectorAll('.hero-video').forEach(function (video) {
+      var lastTime = null;
+
+      function reverseStep(now) {
+        if (lastTime === null) lastTime = now;
+        var next = video.currentTime - (now - lastTime) / 1000;
+        lastTime = now;
+        if (next <= 0) {
+          video.currentTime = 0;
+          lastTime = null;
+          video.play();
+          return;
+        }
+        video.currentTime = next;
+        requestAnimationFrame(reverseStep);
+      }
+
+      video.addEventListener('ended', function () {
+        lastTime = null;
+        requestAnimationFrame(reverseStep);
+      });
+    });
+
+    /* ── Scroll word reveal ───────────────────────────────────────────────────
+     * Wraps every word in animatable text into a .word span (opacity:0 →
+     * opacity:1 + translateY). Hero text reveals on load; everything else
+     * reveals via IntersectionObserver as sections scroll into view.
+     * ─────────────────────────────────────────────────────────────────────── */
+    (function () {
+      var WORD_MS = 55; // ms between successive words
+
+      /* Split an element's text nodes into individual .word spans */
+      function wrapWords(el) {
+        var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+        var nodes = [];
+        var n;
+        while ((n = walker.nextNode())) {
+          if (n.textContent.trim()) nodes.push(n);
+        }
+        nodes.forEach(function (textNode) {
+          var parts = textNode.textContent.split(/(\s+)/);
+          var frag  = document.createDocumentFragment();
+          parts.forEach(function (part) {
+            if (/\S/.test(part)) {
+              var s = document.createElement('span');
+              s.className = 'word';
+              s.textContent = part;
+              frag.appendChild(s);
+            } else if (part) {
+              frag.appendChild(document.createTextNode(part));
+            }
+          });
+          textNode.parentNode.replaceChild(frag, textNode);
+        });
+      }
+
+      /* Reveal all .word spans inside el, staggered from startDelay */
+      function revealWords(el, startDelay) {
+        el.querySelectorAll('.word:not(.visible)').forEach(function (w, i) {
+          setTimeout(function () { w.classList.add('visible'); }, (startDelay || 0) + i * WORD_MS);
+        });
+      }
+
+      /* 1 — Wrap all target text elements */
+      document.querySelectorAll(
+        '.section-header h2, .section-header p, .tag,' +
+        '.service-card h3, .service-card p,' +
+        '.stat-number, .stat-label,' +
+        '.about-centered p, .about-list li,' +
+        '.cta-band h2, .cta-band p,' +
+        '.footer-brand p, .footer-bottom span'
+      ).forEach(wrapWords);
+
+      /* 2 — Hero: staggered reveal on load (above the fold) */
+      document.querySelectorAll(
+        '.hero-actions'
+      ).forEach(function (el, i) {
+        revealWords(el, 250 + i * 90);
+      });
+
+      /* 3 — Everything else: reveal when container scrolls into view */
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            revealWords(entry.target, 0);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll(
+        '.section-header, .service-card, .stat-item,' +
+        '.about-centered, .cta-band > .container, .footer-brand, .footer-bottom'
+      ).forEach(function (el) { observer.observe(el); });
+    })();
+
+    /* ── Booking form: submit inline, no page redirect ── */
+    (function () {
+      var form = document.getElementById('booking-form');
+      var success = document.getElementById('booking-success');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var data = new FormData(form);
+        var subject = encodeURIComponent('Booking Request — ' + data.get('event'));
+        var body = encodeURIComponent(
+          'Name: ' + data.get('name') + '\n' +
+          'Phone: ' + data.get('phone') + '\n' +
+          'Email: ' + data.get('email') + '\n' +
+          'Event: ' + data.get('event') + '\n' +
+          'Guest Count: ' + (data.get('guests') || '—') + '\n' +
+          'Event Date: ' + (data.get('date') || '—')
+        );
+        var mailtoLink = document.createElement('a');
+        mailtoLink.href = 'mailto:beatzzbydev@gmail.com?subject=' + subject + '&body=' + body;
+        mailtoLink.click();
+
+        success.style.display = 'block';
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>
