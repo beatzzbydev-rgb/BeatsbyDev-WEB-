@@ -511,10 +511,11 @@
       gap: 12px;
       margin: 24px 0 36px;
     }
-    .about-list li {
+       .about-list li {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 12px;
+      gap: 6px 12px;
       font-size: 14px;
       font-weight: 600;
       color: var(--gray-200);
@@ -526,15 +527,15 @@
       flex-shrink: 0;
     }
     .about-list-centered {
-      display: inline-flex;
+      display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
       text-align: left;
+      width: fit-content;
+      max-width: 100%;
       margin: 0 auto;
     }
-    .contact-line {
-      font-size: 13px;
-      color: var(--gray-400);
+
       margin-top: 6px;
     }
     .contact-line a { color: var(--accent); font-weight: 700; }
